@@ -2,10 +2,15 @@ package com.dl.dynamicexoplayer;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 import butterknife.BindView;
@@ -22,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 			"https://www.videvo.net/?page_id=123&desc=rivervideo.mov&vid=5500",
 			"https://www.videvo.net/?page_id=123&desc=Trees__Snow.mp4&vid=3067",
 			"https://www.videvo.net/?page_id=123&desc=Stars_time_lapse.mp4&vid=3447",
-			"https://www.videvo.net/?page_id=123&desc=Macro_Shot_of_Fish_in_Water_2_1280x720_iPhone_66SPlus.mp4&vid=5172 "
+			"https://www.videvo.net/?page_id=123&desc=Macro_Shot_of_Fish_in_Water_2_1280x720_iPhone_66SPlus.mp4&vid=5172"
 	};
 
 	@BindView(R.id.simple_exo_player_view)
@@ -38,7 +43,77 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void initialize() {
+		setupPlayer();
+	}
 
+	private void setupPlayer() {
+		mPlayer = new Player(this, mSimpleExoPlayerView, new com.google.android.exoplayer2.Player.EventListener() {
+			@Override
+			public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+
+			}
+
+			@Override
+			public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+				Log.d("danny", "onTracksChanged");
+			}
+
+			@Override
+			public void onLoadingChanged(boolean isLoading) {
+
+			}
+
+			@Override
+			public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+				Log.d("danny", "onPlayerStateChanged");
+
+				switch (playbackState) {
+					case com.google.android.exoplayer2.Player.STATE_BUFFERING:
+						Log.d("danny", "Player is in STATE_BUFFERING");
+
+						break;
+
+					case com.google.android.exoplayer2.Player.STATE_READY:
+						Log.d("danny", "Player is in STATE_READY");
+
+						break;
+				}
+			}
+
+			@Override
+			public void onRepeatModeChanged(int repeatMode) {
+
+			}
+
+			@Override
+			public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+			}
+
+			@Override
+			public void onPlayerError(ExoPlaybackException error) {
+				error.printStackTrace();
+			}
+
+			@Override
+			public void onPositionDiscontinuity(int reason) {
+
+			}
+
+			@Override
+			public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
+			}
+
+			@Override
+			public void onSeekProcessed() {
+
+			}
+		});
+
+		for (String url : mUrls) {
+			mPlayer.addMedia(url);
+		}
 	}
 
 	@Override
@@ -52,9 +127,7 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_item_main_add_media:
-				Toast.makeText(this, "Add media", Toast.LENGTH_SHORT).show();
-
-				return true;
+				return false;
 
 			default:
 				return super.onOptionsItemSelected(item);

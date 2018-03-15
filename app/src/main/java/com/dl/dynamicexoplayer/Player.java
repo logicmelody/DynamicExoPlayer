@@ -19,6 +19,7 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.Player.EventListener;
 
 /**
  * Created by dannylin on 2018/3/15.
@@ -31,11 +32,15 @@ public class Player {
 	private SimpleExoPlayerView mPlayerView;
 	private SimpleExoPlayer mPlayer;
 
+	private EventListener mEventListener;
 
-	public Player(Context context, SimpleExoPlayerView playerView) {
+
+	public Player(Context context, SimpleExoPlayerView playerView, EventListener eventListener) {
 		this.mContext = context;
 		this.mDynamicConcatenatingMediaSource = new DynamicConcatenatingMediaSource();
 		this.mPlayerView = playerView;
+		mEventListener = eventListener;
+
 		setupPlayer();
 	}
 
@@ -45,6 +50,9 @@ public class Player {
 		TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
 		mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
+		mPlayer.setPlayWhenReady(true);
+		mPlayer.addListener(mEventListener);
+
 		mPlayerView.setPlayer(mPlayer);
 	}
 
