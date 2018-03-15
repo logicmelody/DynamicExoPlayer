@@ -19,7 +19,6 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
 	private Player mPlayer;
-	private int mViedoIndex = 0;
 
 	private String mUrls[] = {
 			"https://www.videvo.net/?page_id=123&desc=river_and_rocks_wide.mp4&vid=2540",
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
 			@Override
 			public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-				Log.d("danny", "onTracksChanged");
+//				Log.d("danny", "onTracksChanged");
 			}
 
 			@Override
@@ -65,19 +64,19 @@ public class MainActivity extends AppCompatActivity {
 
 			@Override
 			public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-				Log.d("danny", "onPlayerStateChanged");
-
-				switch (playbackState) {
-					case com.google.android.exoplayer2.Player.STATE_BUFFERING:
-						Log.d("danny", "Player is in STATE_BUFFERING");
-
-						break;
-
-					case com.google.android.exoplayer2.Player.STATE_READY:
-						Log.d("danny", "Player is in STATE_READY");
-
-						break;
-				}
+//				Log.d("danny", "onPlayerStateChanged");
+//
+//				switch (playbackState) {
+//					case com.google.android.exoplayer2.Player.STATE_BUFFERING:
+//						Log.d("danny", "Player is in STATE_BUFFERING");
+//
+//						break;
+//
+//					case com.google.android.exoplayer2.Player.STATE_READY:
+//						Log.d("danny", "Player is in STATE_READY");
+//
+//						break;
+//				}
 			}
 
 			@Override
@@ -127,9 +126,13 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_item_main_previous_media:
+				mPlayer.switchToPrevious();
+
 				return true;
 
 			case R.id.menu_item_main_next_media:
+				mPlayer.switchToNext();
+
 				return true;
 
 			default:

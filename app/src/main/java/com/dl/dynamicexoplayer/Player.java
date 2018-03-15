@@ -2,6 +2,7 @@ package com.dl.dynamicexoplayer;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -33,6 +34,8 @@ public class Player {
 	private SimpleExoPlayer mPlayer;
 
 	private EventListener mEventListener;
+
+	private int mCurrentMediaPosition = 0;
 
 
 	public Player(Context context, SimpleExoPlayerView playerView, EventListener eventListener) {
@@ -79,5 +82,35 @@ public class Player {
 		} else {
 			mDynamicConcatenatingMediaSource.addMediaSource(mediaSource);
 		}
+	}
+
+	public void switchToPrevious() {
+		if (!isPositionValid(mCurrentMediaPosition - 1)) {
+			Log.d("danny", "Position is not valid");
+
+			return;
+		}
+
+		mCurrentMediaPosition--;
+		mPlayer.seekToDefaultPosition(mCurrentMediaPosition);
+
+		Log.d("danny", "switchToPrevious position " + mCurrentMediaPosition);
+	}
+
+	public void switchToNext() {
+		if (!isPositionValid(mCurrentMediaPosition + 1)) {
+			Log.d("danny", "Position is not valid");
+
+			return;
+		}
+
+		mCurrentMediaPosition++;
+		mPlayer.seekToDefaultPosition(mCurrentMediaPosition);
+
+		Log.d("danny", "switchToNext position " + mCurrentMediaPosition);
+	}
+
+	private boolean isPositionValid(int position) {
+		return position >= 0 && position < mDynamicConcatenatingMediaSource.getSize();
 	}
 }
