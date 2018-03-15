@@ -126,8 +126,11 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menu_item_main_add_media:
-				return false;
+			case R.id.menu_item_main_previous_media:
+				return true;
+
+			case R.id.menu_item_main_next_media:
+				return true;
 
 			default:
 				return super.onOptionsItemSelected(item);

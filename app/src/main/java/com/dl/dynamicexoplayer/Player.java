@@ -51,6 +51,7 @@ public class Player {
 
 		mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
 		mPlayer.setPlayWhenReady(true);
+		mPlayer.setRepeatMode(com.google.android.exoplayer2.Player.REPEAT_MODE_ONE);
 		mPlayer.addListener(mEventListener);
 
 		mPlayerView.setPlayer(mPlayer);
@@ -74,7 +75,6 @@ public class Player {
 		if (mDynamicConcatenatingMediaSource.getSize() == 0) {
 			mDynamicConcatenatingMediaSource.addMediaSource(mediaSource);
 			mPlayer.prepare(mDynamicConcatenatingMediaSource);
-			mPlayer.setPlayWhenReady(true);
 
 		} else {
 			mDynamicConcatenatingMediaSource.addMediaSource(mediaSource);
