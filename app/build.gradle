@@ -26,7 +26,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    compile 'com.google.android.exoplayer:exoplayer:2.7.1'
+    compile 'com.google.android.exoplayer:exoplayer-core:2.7.1'
+    compile 'com.google.android.exoplayer:exoplayer-dash:2.7.1'
+    compile 'com.google.android.exoplayer:exoplayer-ui:2.7.1'
 
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
