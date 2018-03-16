@@ -114,6 +114,13 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	@Override
+	protected void onDestroy() {
+		mPlayer.release();
+
+		super.onDestroy();
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 

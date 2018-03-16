@@ -65,6 +65,10 @@ public class Player {
 		mPlayerView.setControllerHideOnTouch(false);
 	}
 
+	public void release() {
+		mPlayer.release();
+	}
+
 	/**
 	 * Add media urls dynamically at run time
 	 * Here we have added urls that are compatible with ExtractorMediaSource
