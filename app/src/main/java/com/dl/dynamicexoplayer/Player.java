@@ -8,6 +8,7 @@ import android.util.Log;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.DynamicConcatenatingMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
@@ -75,15 +76,15 @@ public class Player {
 		DefaultBandwidthMeter bandwidthMeterA = new DefaultBandwidthMeter();
 		DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(mContext, Util.getUserAgent(mContext, "DynamicExoPlayer"), bandwidthMeterA);
 
-		DashMediaSource dashMediaSource = new DashMediaSource(Uri.parse(url), dataSourceFactory,
+		MediaSource mediaSource = new DashMediaSource(Uri.parse(url), dataSourceFactory,
 				new DefaultDashChunkSource.Factory(dataSourceFactory), mHandler, null);
 
 		if (mDynamicConcatenatingMediaSource.getSize() == 0) {
-			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
+			mDynamicConcatenatingMediaSource.addMediaSource(mediaSource);
 			mPlayer.prepare(mDynamicConcatenatingMediaSource);
 
 		} else {
-			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
+			mDynamicConcatenatingMediaSource.addMediaSource(mediaSource);
 		}
 	}
 
