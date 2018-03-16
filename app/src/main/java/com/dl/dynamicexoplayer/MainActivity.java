@@ -21,12 +21,8 @@ public class MainActivity extends AppCompatActivity {
 	private Player mPlayer;
 
 	private String mUrls[] = {
-			"https://www.videvo.net/?page_id=123&desc=river_and_rocks_wide.mp4&vid=2540",
-			"https://www.videvo.net/?page_id=123&desc=RainierFlowers720p.mov&vid=4162",
-			"https://www.videvo.net/?page_id=123&desc=rivervideo.mov&vid=5500",
-			"https://www.videvo.net/?page_id=123&desc=Trees__Snow.mp4&vid=3067",
-			"https://www.videvo.net/?page_id=123&desc=Stars_time_lapse.mp4&vid=3447",
-			"https://www.videvo.net/?page_id=123&desc=Macro_Shot_of_Fish_in_Water_2_1280x720_iPhone_66SPlus.mp4&vid=5172"
+			"https://bitmovin-a.akamaihd.net/content/playhouse-vr/mpds/105560.mpd",
+			"https://s3.amazonaws.com/_bc_dml/example-content/sintel_dash/sintel_vod.mpd"
 	};
 
 	@BindView(R.id.simple_exo_player_view)
@@ -54,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
 			@Override
 			public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-//				Log.d("danny", "onTracksChanged");
+				Log.d("danny", "onTracksChanged");
 			}
 
 			@Override
@@ -64,19 +60,19 @@ public class MainActivity extends AppCompatActivity {
 
 			@Override
 			public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-//				Log.d("danny", "onPlayerStateChanged");
-//
-//				switch (playbackState) {
-//					case com.google.android.exoplayer2.Player.STATE_BUFFERING:
-//						Log.d("danny", "Player is in STATE_BUFFERING");
-//
-//						break;
-//
-//					case com.google.android.exoplayer2.Player.STATE_READY:
-//						Log.d("danny", "Player is in STATE_READY");
-//
-//						break;
-//				}
+				Log.d("danny", "onPlayerStateChanged");
+
+				switch (playbackState) {
+					case com.google.android.exoplayer2.Player.STATE_BUFFERING:
+						Log.d("danny", "Player is in STATE_BUFFERING");
+
+						break;
+
+					case com.google.android.exoplayer2.Player.STATE_READY:
+						Log.d("danny", "Player is in STATE_READY");
+
+						break;
+				}
 			}
 
 			@Override
@@ -91,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
 			@Override
 			public void onPlayerError(ExoPlaybackException error) {
+				Log.d("danny", "onPlayerError");
+
 				error.printStackTrace();
 			}
 

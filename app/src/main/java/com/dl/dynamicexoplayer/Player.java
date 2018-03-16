@@ -2,15 +2,14 @@ package com.dl.dynamicexoplayer;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.DynamicConcatenatingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -29,6 +28,8 @@ import com.google.android.exoplayer2.Player.EventListener;
 public class Player {
 
 	private Context mContext;
+	private Handler mHandler;
+
 	private DynamicConcatenatingMediaSource mDynamicConcatenatingMediaSource;
 	private SimpleExoPlayerView mPlayerView;
 	private SimpleExoPlayer mPlayer;
@@ -39,9 +40,10 @@ public class Player {
 
 
 	public Player(Context context, SimpleExoPlayerView playerView, EventListener eventListener) {
-		this.mContext = context;
-		this.mDynamicConcatenatingMediaSource = new DynamicConcatenatingMediaSource();
-		this.mPlayerView = playerView;
+		mContext = context;
+		mHandler = new Handler();
+		mDynamicConcatenatingMediaSource = new DynamicConcatenatingMediaSource();
+		mPlayerView = playerView;
 		mEventListener = eventListener;
 
 		setupPlayer();
@@ -69,18 +71,17 @@ public class Player {
 	 */
 	public void addMedia(String url) {
 		DefaultBandwidthMeter bandwidthMeterA = new DefaultBandwidthMeter();
-		DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(mContext, Util.getUserAgent(mContext, "NepTechSansaar"), bandwidthMeterA);
+		DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(mContext, Util.getUserAgent(mContext, "DynamicExoPlayer"), bandwidthMeterA);
 
-		ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-		MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(url),
-				dataSourceFactory, extractorsFactory, null, null);
+		DashMediaSource dashMediaSource = new DashMediaSource(Uri.parse(url), dataSourceFactory,
+				new DefaultDashChunkSource.Factory(dataSourceFactory), mHandler, null);
 
 		if (mDynamicConcatenatingMediaSource.getSize() == 0) {
-			mDynamicConcatenatingMediaSource.addMediaSource(mediaSource);
+			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
 			mPlayer.prepare(mDynamicConcatenatingMediaSource);
 
 		} else {
-			mDynamicConcatenatingMediaSource.addMediaSource(mediaSource);
+			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
 		}
 	}
 
