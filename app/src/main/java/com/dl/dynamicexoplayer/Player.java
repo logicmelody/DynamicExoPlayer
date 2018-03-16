@@ -60,6 +60,8 @@ public class Player {
 		mPlayer.addListener(mEventListener);
 
 		mPlayerView.setPlayer(mPlayer);
+		mPlayerView.setControllerShowTimeoutMs(0);
+		mPlayerView.setControllerHideOnTouch(false);
 	}
 
 	/**
