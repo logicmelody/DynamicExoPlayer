@@ -26,7 +26,7 @@ import com.google.android.exoplayer2.Player.EventListener;
  * Created by dannylin on 2018/3/15.
  */
 
-public class Player {
+public class MediaPlayer {
 
 	private Context mContext;
 	private Handler mHandler;
@@ -40,7 +40,7 @@ public class Player {
 	private int mCurrentMediaPosition = 0;
 
 
-	public Player(Context context, SimpleExoPlayerView playerView, EventListener eventListener) {
+	public MediaPlayer(Context context, SimpleExoPlayerView playerView, EventListener eventListener) {
 		mContext = context;
 		mHandler = new Handler();
 		mDynamicConcatenatingMediaSource = new DynamicConcatenatingMediaSource();
@@ -66,6 +66,7 @@ public class Player {
 	}
 
 	public void release() {
+        mPlayer.removeListener(mEventListener);
 		mPlayer.release();
 	}
 
