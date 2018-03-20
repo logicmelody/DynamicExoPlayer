@@ -2,12 +2,12 @@ package com.dl.dynamicexoplayer;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.DynamicConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -16,15 +16,9 @@ import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.Player.EventListener;
 
 /**
@@ -36,10 +30,8 @@ public class MediaPlayer {
 	private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
 	private Context mContext;
-	private Handler mHandler;
 
 	private DynamicConcatenatingMediaSource mDynamicConcatenatingMediaSource;
-	private SimpleExoPlayerView mPlayerView;
 	private SimpleExoPlayer mPlayer;
 
 	private EventListener mEventListener;
@@ -47,11 +39,9 @@ public class MediaPlayer {
 	private int mCurrentMediaPosition = 0;
 
 
-	public MediaPlayer(Context context, SimpleExoPlayerView playerView, EventListener eventListener) {
+	public MediaPlayer(Context context, EventListener eventListener) {
 		mContext = context;
-		mHandler = new Handler();
 		mDynamicConcatenatingMediaSource = new DynamicConcatenatingMediaSource();
-		mPlayerView = playerView;
 		mEventListener = eventListener;
 
 		setupPlayer();
@@ -64,10 +54,8 @@ public class MediaPlayer {
 				new DefaultLoadControl());
 
 		mPlayer.setPlayWhenReady(true);
-		mPlayer.setRepeatMode(com.google.android.exoplayer2.Player.REPEAT_MODE_ONE);
+		mPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
 		mPlayer.addListener(mEventListener);
-
-		mPlayerView.setPlayer(mPlayer);
 	}
 
 	public void release() {
@@ -132,5 +120,9 @@ public class MediaPlayer {
 
 	private boolean isPositionValid(int position) {
 		return position >= 0 && position < mDynamicConcatenatingMediaSource.getSize();
+	}
+
+	public SimpleExoPlayer getExoPlayer() {
+		return mPlayer;
 	}
 }

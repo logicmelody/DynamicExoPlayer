@@ -7,9 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
@@ -43,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void setupPlayer() {
-		mPlayer = new MediaPlayer(this, mSimpleExoPlayerView, new Player.DefaultEventListener() {
+		mPlayer = new MediaPlayer(this, new Player.DefaultEventListener() {
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -103,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
 		for (String url : mUrls) {
 			mPlayer.addMedia(url);
 		}
+
+		mSimpleExoPlayerView.setPlayer(mPlayer.getExoPlayer());
 	}
 
 	@Override
