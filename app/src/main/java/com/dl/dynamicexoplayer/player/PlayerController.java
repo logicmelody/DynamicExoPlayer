@@ -105,7 +105,7 @@ public class PlayerController {
 
 		return httpDataSourceFactory;
 	}
-	
+
 	public void switchToPrevious() {
 		if (!isPositionValid(mCurrentMediaPosition - 1)) {
 			Log.d("danny", "Position is not valid");
