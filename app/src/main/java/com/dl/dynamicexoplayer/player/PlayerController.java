@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.dl.dynamicexoplayer.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -30,7 +29,7 @@ public class PlayerController {
 	private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 	private static final String JWT = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjU5MTVhOWYzIn0.eyJzdWIiOiI1N2Q5M2E5ZjgyNTk1YjM0YjZkNDQyNDUiLCJpc3MiOiJhcGkudjIuc3dhZy5saXZlIiwiYXVkIjoiYXBpLnYyLnN3YWcubGl2ZSIsImlhdCI6MTUyMTUxNDg3MywiZXhwIjoxNTIyNzI0NDczLCJqdGkiOiJXckI1ZVZLUEVpMm9wTnZlIiwic2NvcGVzIjpbImN1cmF0b3IiXX0.q5KbZS9zPh6pFk6w-_uHcYPmfXuVhd66UAnygR14RYI";
 
-	private Context mContext;
+	private volatile static PlayerController sPlayerController = null;
 
 	private DynamicConcatenatingMediaSource mDynamicConcatenatingMediaSource;
 	private SimpleExoPlayer mPlayer;
@@ -40,27 +39,36 @@ public class PlayerController {
 	private int mCurrentMediaPosition = 0;
 
 
-	public PlayerController(Context context, EventListener eventListener) {
-		mContext = context;
-		mDynamicConcatenatingMediaSource = new DynamicConcatenatingMediaSource();
-		mEventListener = eventListener;
+	public static PlayerController getInstance(Context context) {
+		if (sPlayerController == null) {
+			synchronized (PlayerController.class) {
+				if (sPlayerController == null) {
+					sPlayerController = new PlayerController(context);
+				}
+			}
+		}
 
-		setupPlayer();
+		return sPlayerController;
 	}
 
-	private void setupPlayer() {
+	private PlayerController(Context context) {
+		mDynamicConcatenatingMediaSource = new DynamicConcatenatingMediaSource();
+
+		setupPlayer(context);
+	}
+
+	private void setupPlayer(Context context) {
 		mPlayer = ExoPlayerFactory.newSimpleInstance(
-				new DefaultRenderersFactory(mContext),
+				new DefaultRenderersFactory(context),
 				new DefaultTrackSelector(new AdaptiveTrackSelection.Factory(BANDWIDTH_METER)),
 				new DefaultLoadControl());
 
 		mPlayer.setPlayWhenReady(true);
 		mPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
-		mPlayer.addListener(mEventListener);
 	}
 
 	public void release() {
-        mPlayer.removeListener(mEventListener);
+		removeEventListener();
 		mPlayer.release();
 	}
 
@@ -91,14 +99,13 @@ public class PlayerController {
 	}
 
 	private HttpDataSource.Factory getHttpDataSourceFactoryWithJwt() {
-		HttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSourceFactory(mContext.getString(R.string.app_name), BANDWIDTH_METER);
+		HttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSourceFactory("user-agent", BANDWIDTH_METER);
 //		httpDataSourceFactory.getDefaultRequestProperties().set("Authorization", "Bearer " + JWT);
 //		httpDataSourceFactory.getDefaultRequestProperties().set("User-Agent", "swag/2.15.1 (Android; com.machipopo.swag; htc; HTC_U-3u; en-US)");
 
 		return httpDataSourceFactory;
 	}
-
-
+	
 	public void switchToPrevious() {
 		if (!isPositionValid(mCurrentMediaPosition - 1)) {
 			Log.d("danny", "Position is not valid");
@@ -131,5 +138,18 @@ public class PlayerController {
 
 	public SimpleExoPlayer getExoPlayer() {
 		return mPlayer;
+	}
+
+	public void addEventListener(EventListener eventListener) {
+		removeEventListener();
+
+		mEventListener = eventListener;
+		mPlayer.addListener(mEventListener);
+	}
+
+	public void removeEventListener() {
+		if (mEventListener != null) {
+			mPlayer.removeListener(mEventListener);
+		}
 	}
 }
