@@ -11,15 +11,14 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.DynamicConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.dash.DashChunkSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.Player.EventListener;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
 
 /**
  * Created by dannylin on 2018/3/15.
@@ -28,6 +27,7 @@ import com.google.android.exoplayer2.Player.EventListener;
 public class MediaPlayer {
 
 	private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
+	private static final String JWT = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjU5MTVhOWYzIn0.eyJzdWIiOiI1N2Q5M2E5ZjgyNTk1YjM0YjZkNDQyNDUiLCJpc3MiOiJhcGkudjIuc3dhZy5saXZlIiwiYXVkIjoiYXBpLnYyLnN3YWcubGl2ZSIsImlhdCI6MTUyMTUxNDg3MywiZXhwIjoxNTIyNzI0NDczLCJqdGkiOiJXckI1ZVZLUEVpMm9wTnZlIiwic2NvcGVzIjpbImN1cmF0b3IiXX0.q5KbZS9zPh6pFk6w-_uHcYPmfXuVhd66UAnygR14RYI";
 
 	private Context mContext;
 
@@ -84,11 +84,17 @@ public class MediaPlayer {
 
 	private MediaSource buildDashMediaSource(String uri) {
 		// DataSource 是專門用來 load 資料的
-		DataSource.Factory manifestDataSourceFactory = new DefaultHttpDataSourceFactory(mContext.getString(R.string.app_name));
-		DashChunkSource.Factory dashChunkSourceFactory =
-				new DefaultDashChunkSource.Factory(new DefaultHttpDataSourceFactory(mContext.getString(R.string.app_name), BANDWIDTH_METER));
+		HttpDataSource.Factory httpDataSourceFactory = getHttpDataSourceFactoryWithJwt();
 
-		return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(Uri.parse(uri));
+		return new DashMediaSource.Factory(new DefaultDashChunkSource.Factory(httpDataSourceFactory), httpDataSourceFactory).createMediaSource(Uri.parse(uri));
+	}
+
+	private HttpDataSource.Factory getHttpDataSourceFactoryWithJwt() {
+		HttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSourceFactory(mContext.getString(R.string.app_name), BANDWIDTH_METER);
+//		httpDataSourceFactory.getDefaultRequestProperties().set("Authorization", "Bearer " + JWT);
+//		httpDataSourceFactory.getDefaultRequestProperties().set("User-Agent", "swag/2.15.1 (Android; com.machipopo.swag; htc; HTC_U-3u; en-US)");
+
+		return httpDataSourceFactory;
 	}
 
 

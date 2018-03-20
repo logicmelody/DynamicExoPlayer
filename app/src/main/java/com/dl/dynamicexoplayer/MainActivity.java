@@ -20,8 +20,14 @@ public class MainActivity extends AppCompatActivity {
 	private MediaPlayer mPlayer;
 
 	private String mUrls[] = {
-			"https://bitmovin-a.akamaihd.net/content/playhouse-vr/mpds/105560.mpd",
-			"https://s3.amazonaws.com/_bc_dml/example-content/sintel_dash/sintel_vod.mpd"
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab07bce769aa52e5f2175f0.mpd",
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab07b4a74913a33de6748ef.mpd",
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab079e5cb499330f301220e.mpd",
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab077e9b85c9212288df431.mpd",
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab075cdb35051155743442b.mpd",
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab06ff220cc2911bb40dd65.mpd",
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab0692020cc295f9a40dd66.mpd",
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab067deb2724c3651bb55bc.mpd"
 	};
 
 	@BindView(R.id.simple_exo_player_view)
