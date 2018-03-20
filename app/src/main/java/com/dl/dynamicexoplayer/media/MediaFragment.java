@@ -3,7 +3,7 @@ package com.dl.dynamicexoplayer.media;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.dl.dynamicexoplayer.R;
 import com.dl.dynamicexoplayer.player.PlayerController;
+import com.dl.dynamicexoplayer.utils.DetectVisibilityInViewPagerFragment;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -24,15 +25,30 @@ import butterknife.ButterKnife;
  * Created by dannylin on 2018/3/20.
  */
 
-public class MediaFragment extends Fragment {
+public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 
 	public static final String TAG = MediaFragment.class.getName();
 
+	private static final String EXTRA_MEDIA_URL = "com.dl.dynamicexoplayer.EXTRA_MEDIA_URL";
+
 	private Context mContext;
+
+	private String mMediaUrl = "";
 
 	@BindView(R.id.simple_exo_player_view)
 	public SimpleExoPlayerView mSimpleExoPlayerView;
 
+
+	public static MediaFragment newInstance(String url) {
+		MediaFragment mediaFragment = new MediaFragment();
+
+		Bundle bundle = new Bundle();
+		bundle.putString(EXTRA_MEDIA_URL, url);
+
+		mediaFragment.setArguments(bundle);
+
+		return mediaFragment;
+	}
 
 	@Override
 	public void onAttach(Context context) {
@@ -54,10 +70,44 @@ public class MediaFragment extends Fragment {
 	}
 
 	private void initialize() {
+		mMediaUrl = getArguments().getString(EXTRA_MEDIA_URL);
+
 		setupPlayer();
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		Log.d("danny", "MediaFragment onStart()");
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		Log.d("danny", "MediaFragment onResume()");
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		Log.d("danny", "MediaFragment onPause()");
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+
+		Log.d("danny", "MediaFragment onStop()");
+	}
+
 	private void setupPlayer() {
+		if (!TextUtils.isEmpty(mMediaUrl)) {
+			PlayerController.getInstance(mContext).addMedia(mMediaUrl);
+		}
+
 		PlayerController.getInstance(mContext).addEventListener(new Player.DefaultEventListener() {
 
 			@Override
@@ -115,19 +165,20 @@ public class MediaFragment extends Fragment {
 			}
 		});
 
-//		for (String url : mUrls) {
-//			PlayerController.getInstance(this).addMedia(url);
-//		}
-
-		PlayerController.getInstance(mContext).addMedia("https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab07bce769aa52e5f2175f0.mpd");
-
 		mSimpleExoPlayerView.setPlayer(PlayerController.getInstance(mContext).getExoPlayer());
 	}
 
 	@Override
-	public void onDestroy() {
-		PlayerController.getInstance(mContext).release();
+	protected void onFragmentVisibleChange(boolean isVisible) {
+		super.onFragmentVisibleChange(isVisible);
 
-		super.onDestroy();
+		Log.d("danny", "onFragmentVisibleChange() is " + isVisible);
+	}
+
+	@Override
+	protected void onFragmentFirstVisible() {
+		super.onFragmentFirstVisible();
+
+		Log.d("danny", "onFragmentFirstVisible()");
 	}
 }

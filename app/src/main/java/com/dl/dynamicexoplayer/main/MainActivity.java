@@ -1,12 +1,13 @@
 package com.dl.dynamicexoplayer.main;
 
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.dl.dynamicexoplayer.R;
-import com.dl.dynamicexoplayer.media.MediaFragment;
-import com.dl.dynamicexoplayer.utils.FragmentUtils;
+import com.dl.dynamicexoplayer.player.PlayerController;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +25,29 @@ public class MainActivity extends AppCompatActivity {
 			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab0649e20cc29397040dd6b.mpd"
 	};
 
+	private MediaPagerAdapter mMediaPagerAdapter;
+
+	private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.OnPageChangeListener() {
+		@Override
+		public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+		}
+
+		@Override
+		public void onPageSelected(int position) {
+
+		}
+
+		@Override
+		public void onPageScrollStateChanged(int state) {
+
+		}
+	};
+
+	@BindView(R.id.view_pager_main_media)
+	public ViewPager mViewPagerMedia;
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,10 +57,25 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void initialize() {
-		setupMediaContent();
+		setupMediaViewPager();
 	}
 
-	private void setupMediaContent() {
-		FragmentUtils.addFragmentTo(getSupportFragmentManager(), new MediaFragment(), MediaFragment.TAG, R.id.view_group_main_media_container);
+	private void setupMediaViewPager() {
+		mMediaPagerAdapter = new MediaPagerAdapter(getSupportFragmentManager());
+
+		for (String url : mUrls) {
+			mMediaPagerAdapter.add(url);
+		}
+
+		mViewPagerMedia.setAdapter(mMediaPagerAdapter);
+		mViewPagerMedia.addOnPageChangeListener(mOnPageChangeListener);
+	}
+
+	@Override
+	protected void onDestroy() {
+		mViewPagerMedia.removeOnPageChangeListener(mOnPageChangeListener);
+		PlayerController.getInstance(this).release();
+
+		super.onDestroy();
 	}
 }
