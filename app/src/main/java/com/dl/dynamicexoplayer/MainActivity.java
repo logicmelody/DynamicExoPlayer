@@ -44,10 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
 	private void setupPlayer() {
 		mPlayer = new MediaPlayer(this, mSimpleExoPlayerView, new Player.DefaultEventListener() {
-            @Override
-            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
-            }
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -92,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("danny", "Actually playing media");
                 }
             }
+
+			@Override
+			public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+			}
 
             @Override
             public void onPlayerError(ExoPlaybackException error) {

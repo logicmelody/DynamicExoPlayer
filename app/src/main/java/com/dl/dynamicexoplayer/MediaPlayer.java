@@ -5,10 +5,13 @@ import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.DynamicConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.dash.DashChunkSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
@@ -17,8 +20,10 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.Player.EventListener;
 
@@ -27,6 +32,8 @@ import com.google.android.exoplayer2.Player.EventListener;
  */
 
 public class MediaPlayer {
+
+	private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
 	private Context mContext;
 	private Handler mHandler;
@@ -51,18 +58,16 @@ public class MediaPlayer {
 	}
 
 	private void setupPlayer() {
-		BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-		TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-		TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+		mPlayer = ExoPlayerFactory.newSimpleInstance(
+				new DefaultRenderersFactory(mContext),
+				new DefaultTrackSelector(new AdaptiveTrackSelection.Factory(BANDWIDTH_METER)),
+				new DefaultLoadControl());
 
-		mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
 		mPlayer.setPlayWhenReady(true);
 		mPlayer.setRepeatMode(com.google.android.exoplayer2.Player.REPEAT_MODE_ONE);
 		mPlayer.addListener(mEventListener);
 
 		mPlayerView.setPlayer(mPlayer);
-		mPlayerView.setControllerShowTimeoutMs(0);
-		mPlayerView.setControllerHideOnTouch(false);
 	}
 
 	public void release() {
@@ -78,20 +83,26 @@ public class MediaPlayer {
 	 * @param url
 	 */
 	public void addMedia(String url) {
-		DefaultBandwidthMeter bandwidthMeterA = new DefaultBandwidthMeter();
-		DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(mContext, Util.getUserAgent(mContext, "DynamicExoPlayer"), bandwidthMeterA);
-
-		MediaSource mediaSource = new DashMediaSource(Uri.parse(url), dataSourceFactory,
-				new DefaultDashChunkSource.Factory(dataSourceFactory), mHandler, null);
+		MediaSource dashMediaSource = buildDashMediaSource(url);
 
 		if (mDynamicConcatenatingMediaSource.getSize() == 0) {
-			mDynamicConcatenatingMediaSource.addMediaSource(mediaSource);
+			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
 			mPlayer.prepare(mDynamicConcatenatingMediaSource);
 
 		} else {
-			mDynamicConcatenatingMediaSource.addMediaSource(mediaSource);
+			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
 		}
 	}
+
+	private MediaSource buildDashMediaSource(String uri) {
+		// DataSource 是專門用來 load 資料的
+		DataSource.Factory manifestDataSourceFactory = new DefaultHttpDataSourceFactory(mContext.getString(R.string.app_name));
+		DashChunkSource.Factory dashChunkSourceFactory =
+				new DefaultDashChunkSource.Factory(new DefaultHttpDataSourceFactory(mContext.getString(R.string.app_name), BANDWIDTH_METER));
+
+		return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(Uri.parse(uri));
+	}
+
 
 	public void switchToPrevious() {
 		if (!isPositionValid(mCurrentMediaPosition - 1)) {
