@@ -1,4 +1,4 @@
-package com.dl.dynamicexoplayer;
+package com.dl.dynamicexoplayer.main;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.dl.dynamicexoplayer.player.PlayerController;
+import com.dl.dynamicexoplayer.R;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -17,7 +19,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-	private MediaPlayer mPlayer;
+	private PlayerController mPlayer;
 
 	private String mUrls[] = {
 			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab07bce769aa52e5f2175f0.mpd",
@@ -27,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
 			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab075cdb35051155743442b.mpd",
 			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab06ff220cc2911bb40dd65.mpd",
 			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab0692020cc295f9a40dd66.mpd",
-			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab067deb2724c3651bb55bc.mpd"
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab067deb2724c3651bb55bc.mpd",
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab0667920cc294dcb40dd64.mpd",
+			"https://storage.googleapis.com/asia.public.swag.live/DJSMPGZV4BlnLTOw7a8a6NgFLxXYkdiC/5ab0649e20cc29397040dd6b.mpd"
 	};
 
 	@BindView(R.id.simple_exo_player_view)
@@ -47,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void setupPlayer() {
-		mPlayer = new MediaPlayer(this, new Player.DefaultEventListener() {
+		mPlayer = new PlayerController(this, new Player.DefaultEventListener() {
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {

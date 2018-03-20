@@ -1,9 +1,10 @@
-package com.dl.dynamicexoplayer;
+package com.dl.dynamicexoplayer.player;
 
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.dl.dynamicexoplayer.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -24,7 +25,7 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
  * Created by dannylin on 2018/3/15.
  */
 
-public class MediaPlayer {
+public class PlayerController {
 
 	private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 	private static final String JWT = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjU5MTVhOWYzIn0.eyJzdWIiOiI1N2Q5M2E5ZjgyNTk1YjM0YjZkNDQyNDUiLCJpc3MiOiJhcGkudjIuc3dhZy5saXZlIiwiYXVkIjoiYXBpLnYyLnN3YWcubGl2ZSIsImlhdCI6MTUyMTUxNDg3MywiZXhwIjoxNTIyNzI0NDczLCJqdGkiOiJXckI1ZVZLUEVpMm9wTnZlIiwic2NvcGVzIjpbImN1cmF0b3IiXX0.q5KbZS9zPh6pFk6w-_uHcYPmfXuVhd66UAnygR14RYI";
@@ -39,7 +40,7 @@ public class MediaPlayer {
 	private int mCurrentMediaPosition = 0;
 
 
-	public MediaPlayer(Context context, EventListener eventListener) {
+	public PlayerController(Context context, EventListener eventListener) {
 		mContext = context;
 		mDynamicConcatenatingMediaSource = new DynamicConcatenatingMediaSource();
 		mEventListener = eventListener;
