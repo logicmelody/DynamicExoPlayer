@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.dl.dynamicexoplayer.R;
 import com.dl.dynamicexoplayer.player.PlayerController;
@@ -88,6 +89,8 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 		@Override
 		public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
 			Log.d("danny", "MediaFragment" + mPosition + ", onTracksChanged()");
+
+			setDebugText();
 		}
 
 		@Override
@@ -98,6 +101,9 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 
 	@BindView(R.id.simple_exo_player_view_media)
 	public SimpleExoPlayerView mSimpleExoPlayerView;
+
+	@BindView(R.id.text_view_media_debug)
+	public TextView mTextViewDebug;
 
 
 	public static MediaFragment newInstance(int position, String url) {
@@ -235,5 +241,12 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 		super.onFragmentFirstVisible();
 
 		Log.d("danny", "MediaFragment" + mPosition + ", onFragmentFirstVisible()");
+	}
+
+	private void setDebugText() {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("Position = " + mPosition);
+
+		mTextViewDebug.setText(stringBuilder.toString());
 	}
 }
