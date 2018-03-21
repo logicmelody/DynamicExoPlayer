@@ -95,7 +95,7 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 
 		@Override
 		public void onPlayerError(ExoPlaybackException error) {
-
+			error.printStackTrace();
 		}
 	};
 
@@ -161,7 +161,7 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 
 	private void addMediaToPlayerController() {
 		if (!TextUtils.isEmpty(mMediaUrl)) {
-			PlayerController.getInstance(mContext).addMedia(mPosition, mMediaUrl);
+			PlayerController.getInstance(mContext).addMedia(mContext, mPosition, mMediaUrl);
 
 			Log.d("danny", "MediaFragment" + mPosition + ", Add media = " + mMediaUrl);
 		}

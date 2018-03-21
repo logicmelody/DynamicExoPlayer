@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DynamicExoPlayer.iml" filepath="$PROJECT_DIR$/DynamicExoPlayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jwt/jwt.iml" filepath="$PROJECT_DIR$/jwt/jwt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/okhttp-3.10.0/okhttp-3.10.0.iml" filepath="$PROJECT_DIR$/okhttp-3.10.0/okhttp-3.10.0.iml" />
     </modules>
   </component>
 </project>
