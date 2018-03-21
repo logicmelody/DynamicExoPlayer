@@ -96,7 +96,7 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 		}
 	};
 
-	@BindView(R.id.simple_exo_player_view)
+	@BindView(R.id.simple_exo_player_view_media)
 	public SimpleExoPlayerView mSimpleExoPlayerView;
 
 
