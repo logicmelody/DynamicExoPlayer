@@ -161,7 +161,7 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 
 	private void addMediaToPlayerController() {
 		if (!TextUtils.isEmpty(mMediaUrl)) {
-			PlayerController.getInstance(mContext).addMedia(mMediaUrl);
+			PlayerController.getInstance(mContext).addMedia(mPosition, mMediaUrl);
 
 			Log.d("danny", "MediaFragment" + mPosition + ", Add media = " + mMediaUrl);
 		}
@@ -224,6 +224,10 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 	private void bindWithPlayer() {
 		PlayerController.getInstance(mContext).addEventListener(mPlayerEventListener);
 		mSimpleExoPlayerView.setPlayer(PlayerController.getInstance(mContext).getExoPlayer());
+
+		// TODO: Might not have dash media source in PlayerController
+		PlayerController.getInstance(mContext).switchToMedia(mPosition);
+
 		shouldBindWithPlayer = false;
 
 		Log.d("danny", "MediaFragment" + mPosition + ", bind with player");

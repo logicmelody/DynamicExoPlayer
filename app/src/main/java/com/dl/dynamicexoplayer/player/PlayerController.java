@@ -20,6 +20,9 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by dannylin on 2018/3/15.
  */
@@ -30,6 +33,9 @@ public class PlayerController {
 	private static final String JWT = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjU5MTVhOWYzIn0.eyJzdWIiOiI1N2Q5M2E5ZjgyNTk1YjM0YjZkNDQyNDUiLCJpc3MiOiJhcGkudjIuc3dhZy5saXZlIiwiYXVkIjoiYXBpLnYyLnN3YWcubGl2ZSIsImlhdCI6MTUyMTUxNDg3MywiZXhwIjoxNTIyNzI0NDczLCJqdGkiOiJXckI1ZVZLUEVpMm9wTnZlIiwic2NvcGVzIjpbImN1cmF0b3IiXX0.q5KbZS9zPh6pFk6w-_uHcYPmfXuVhd66UAnygR14RYI";
 
 	private volatile static PlayerController sPlayerController = null;
+
+	// <Fragment position, DynamicConcatenatingMediaSource index>
+	private Map<Integer, Integer> mFragmentMediaSourcePositionMap;
 
 	private DynamicConcatenatingMediaSource mDynamicConcatenatingMediaSource;
 	private SimpleExoPlayer mPlayer;
@@ -53,6 +59,7 @@ public class PlayerController {
 
 	private PlayerController(Context context) {
 		mDynamicConcatenatingMediaSource = new DynamicConcatenatingMediaSource();
+		mFragmentMediaSourcePositionMap = new HashMap<>();
 
 		setupPlayer(context);
 	}
@@ -81,7 +88,7 @@ public class PlayerController {
 	 *
 	 * @param url
 	 */
-	public void addMedia(String url) {
+	public synchronized void addMedia(int fragmentPosition, String url) {
 		MediaSource dashMediaSource = buildDashMediaSource(url);
 
 		if (mDynamicConcatenatingMediaSource.getSize() == 0) {
@@ -91,6 +98,8 @@ public class PlayerController {
 		} else {
 			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
 		}
+
+		mFragmentMediaSourcePositionMap.put(fragmentPosition, mDynamicConcatenatingMediaSource.getSize() - 1);
 	}
 
 	private MediaSource buildDashMediaSource(String uri) {
@@ -106,6 +115,14 @@ public class PlayerController {
 //		httpDataSourceFactory.getDefaultRequestProperties().set("User-Agent", "swag/2.15.1 (Android; com.machipopo.swag; htc; HTC_U-3u; en-US)");
 
 		return httpDataSourceFactory;
+	}
+
+	public void switchToMedia(int fragmentPosition) {
+		if (!mFragmentMediaSourcePositionMap.containsKey(fragmentPosition)) {
+			return;
+		}
+
+		mPlayer.seekToDefaultPosition(mFragmentMediaSourcePositionMap.get(fragmentPosition));
 	}
 
 	public void switchToPrevious() {
