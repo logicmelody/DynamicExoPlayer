@@ -37,6 +37,65 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 	private int mPosition = 0;
 	private String mMediaUrl = "";
 
+	private boolean shouldBindWithPlayer = false;
+
+	private Player.EventListener mPlayerEventListener = new Player.DefaultEventListener() {
+
+		@Override
+		public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+			String stateString;
+
+			switch (playbackState) {
+				// The player has been instantiated but has not being prepared with a MediaSource yet..
+				case Player.STATE_IDLE:
+					stateString = "ExoPlayer.STATE_IDLE      -";
+					break;
+
+				// The player is not able to immediately play from the current position because not enough data is buffered.
+				// ExoPlayer.EventListener.onPlaybackStateChanged() is called with STATE_BUFFERING.
+				// Entering the buffering state happens naturally once at the very beginning and
+				// after a user requested a seek to a position yet not available (eg. backward seeking).
+				// All other occurrences of STATE_BUFFERING must be considered harmful for QoE.
+				case Player.STATE_BUFFERING:
+					stateString = "ExoPlayer.STATE_BUFFERING -";
+					break;
+
+				// The player is able to immediately play from the current position.
+				// This means the player does actually play media when playWhenReady is true.
+				// If it is false the player is paused.
+				case Player.STATE_READY:
+					stateString = "ExoPlayer.STATE_READY     -";
+					break;
+
+				// The player has finished playing the media.
+				case Player.STATE_ENDED:
+					stateString = "ExoPlayer.STATE_ENDED     -";
+					break;
+
+				default:
+					stateString = "UNKNOWN_STATE             -";
+					break;
+			}
+
+			Log.d("danny", "MediaFragment" + mPosition + " changed state to " + stateString + " playWhenReady: " + playWhenReady);
+
+			if (playWhenReady && playbackState == Player.STATE_READY) {
+				// actually playing media
+				Log.d("danny", "MediaFragment" + mPosition + ", Actually playing media");
+			}
+		}
+
+		@Override
+		public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+			Log.d("danny", "MediaFragment" + mPosition + ", onTracksChanged()");
+		}
+
+		@Override
+		public void onPlayerError(ExoPlaybackException error) {
+
+		}
+	};
+
 	@BindView(R.id.simple_exo_player_view)
 	public SimpleExoPlayerView mSimpleExoPlayerView;
 
@@ -88,6 +147,10 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 
 	private void initialize() {
 		addMediaToPlayerController();
+
+		if (shouldBindWithPlayer) {
+			bindWithPlayer();
+		}
 	}
 
 	private void addMediaToPlayerController() {
@@ -139,6 +202,7 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 
 		if (mSimpleExoPlayerView == null) {
 			Log.d("danny", "MediaFragment" + mPosition + ", mSimpleExoPlayerView is null");
+			shouldBindWithPlayer = true;
 
 			return;
 		}
@@ -152,64 +216,9 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 	}
 
 	private void bindWithPlayer() {
-		PlayerController.getInstance(mContext).addEventListener(new Player.DefaultEventListener() {
-
-			@Override
-			public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-				String stateString;
-
-				switch (playbackState) {
-					// The player has been instantiated but has not being prepared with a MediaSource yet..
-					case Player.STATE_IDLE:
-						stateString = "ExoPlayer.STATE_IDLE      -";
-						break;
-
-					// The player is not able to immediately play from the current position because not enough data is buffered.
-					// ExoPlayer.EventListener.onPlaybackStateChanged() is called with STATE_BUFFERING.
-					// Entering the buffering state happens naturally once at the very beginning and
-					// after a user requested a seek to a position yet not available (eg. backward seeking).
-					// All other occurrences of STATE_BUFFERING must be considered harmful for QoE.
-					case Player.STATE_BUFFERING:
-						stateString = "ExoPlayer.STATE_BUFFERING -";
-						break;
-
-					// The player is able to immediately play from the current position.
-					// This means the player does actually play media when playWhenReady is true.
-					// If it is false the player is paused.
-					case Player.STATE_READY:
-						stateString = "ExoPlayer.STATE_READY     -";
-						break;
-
-					// The player has finished playing the media.
-					case Player.STATE_ENDED:
-						stateString = "ExoPlayer.STATE_ENDED     -";
-						break;
-
-					default:
-						stateString = "UNKNOWN_STATE             -";
-						break;
-				}
-
-				Log.d("danny", "MediaFragment" + mPosition + " changed state to " + stateString + " playWhenReady: " + playWhenReady);
-
-				if (playWhenReady && playbackState == Player.STATE_READY) {
-					// actually playing media
-					Log.d("danny", "MediaFragment" + mPosition + ", Actually playing media");
-				}
-			}
-
-			@Override
-			public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-				Log.d("danny", "MediaFragment" + mPosition + ", onTracksChanged()");
-			}
-
-			@Override
-			public void onPlayerError(ExoPlaybackException error) {
-
-			}
-		});
-
+		PlayerController.getInstance(mContext).addEventListener(mPlayerEventListener);
 		mSimpleExoPlayerView.setPlayer(PlayerController.getInstance(mContext).getExoPlayer());
+		shouldBindWithPlayer = false;
 
 		Log.d("danny", "MediaFragment" + mPosition + ", bind with player");
 	}
