@@ -69,7 +69,9 @@ public class PlayerController {
 
 	public void release() {
 		removeEventListener();
+
 		mPlayer.release();
+		sPlayerController = null;
 	}
 
 	/**
@@ -150,6 +152,7 @@ public class PlayerController {
 	public void removeEventListener() {
 		if (mEventListener != null) {
 			mPlayer.removeListener(mEventListener);
+			mEventListener = null;
 		}
 	}
 }

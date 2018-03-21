@@ -29,20 +29,23 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 
 	public static final String TAG = MediaFragment.class.getName();
 
+	private static final String EXTRA_POSITION = "com.dl.dynamicexoplayer.EXTRA_POSITION";
 	private static final String EXTRA_MEDIA_URL = "com.dl.dynamicexoplayer.EXTRA_MEDIA_URL";
 
 	private Context mContext;
 
+	private int mPosition = 0;
 	private String mMediaUrl = "";
 
 	@BindView(R.id.simple_exo_player_view)
 	public SimpleExoPlayerView mSimpleExoPlayerView;
 
 
-	public static MediaFragment newInstance(String url) {
+	public static MediaFragment newInstance(int position, String url) {
 		MediaFragment mediaFragment = new MediaFragment();
 
 		Bundle bundle = new Bundle();
+		bundle.putInt(EXTRA_POSITION, position);
 		bundle.putString(EXTRA_MEDIA_URL, url);
 
 		mediaFragment.setArguments(bundle);
@@ -66,48 +69,89 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		ButterKnife.bind(this, getView());
+		getIntentData();
 		initialize();
+
+		Log.d("danny", "MediaFragment" + mPosition + ", onActivityCreated()");
+	}
+
+	private void getIntentData() {
+		Bundle bundle = getArguments();
+
+		if (bundle == null) {
+			return;
+		}
+
+		mPosition = bundle.getInt(EXTRA_POSITION);
+		mMediaUrl = bundle.getString(EXTRA_MEDIA_URL);
 	}
 
 	private void initialize() {
-		mMediaUrl = getArguments().getString(EXTRA_MEDIA_URL);
+		addMediaToPlayerController();
+	}
 
-		setupPlayer();
+	private void addMediaToPlayerController() {
+		if (!TextUtils.isEmpty(mMediaUrl)) {
+			PlayerController.getInstance(mContext).addMedia(mMediaUrl);
+
+			Log.d("danny", "MediaFragment" + mPosition + ", Add media = " + mMediaUrl);
+		}
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
 
-		Log.d("danny", "MediaFragment onStart()");
+		Log.d("danny", "MediaFragment" + mPosition + ", onStart()");
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		Log.d("danny", "MediaFragment onResume()");
+		Log.d("danny", "MediaFragment" + mPosition + ", onResume()");
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 
-		Log.d("danny", "MediaFragment onPause()");
+		Log.d("danny", "MediaFragment" + mPosition + ", onPause()");
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
 
-		Log.d("danny", "MediaFragment onStop()");
+		Log.d("danny", "MediaFragment" + mPosition + ", onStop()");
 	}
 
-	private void setupPlayer() {
-		if (!TextUtils.isEmpty(mMediaUrl)) {
-			PlayerController.getInstance(mContext).addMedia(mMediaUrl);
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		Log.d("danny", "MediaFragment" + mPosition + ", onDestroy()");
+	}
+
+	@Override
+	protected void onFragmentVisibleChange(boolean isVisible) {
+		super.onFragmentVisibleChange(isVisible);
+
+		if (mSimpleExoPlayerView == null) {
+			Log.d("danny", "MediaFragment" + mPosition + ", mSimpleExoPlayerView is null");
+
+			return;
 		}
 
+		if (isVisible) {
+			bindWithPlayer();
+
+		} else {
+			unbindWithPlayer();
+		}
+	}
+
+	private void bindWithPlayer() {
 		PlayerController.getInstance(mContext).addEventListener(new Player.DefaultEventListener() {
 
 			@Override
@@ -146,17 +190,17 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 						break;
 				}
 
-				Log.d("danny", "changed state to " + stateString + " playWhenReady: " + playWhenReady);
+				Log.d("danny", "MediaFragment" + mPosition + " changed state to " + stateString + " playWhenReady: " + playWhenReady);
 
 				if (playWhenReady && playbackState == Player.STATE_READY) {
 					// actually playing media
-					Log.d("danny", "Actually playing media");
+					Log.d("danny", "MediaFragment" + mPosition + ", Actually playing media");
 				}
 			}
 
 			@Override
 			public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
+				Log.d("danny", "MediaFragment" + mPosition + ", onTracksChanged()");
 			}
 
 			@Override
@@ -166,19 +210,21 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 		});
 
 		mSimpleExoPlayerView.setPlayer(PlayerController.getInstance(mContext).getExoPlayer());
+
+		Log.d("danny", "MediaFragment" + mPosition + ", bind with player");
 	}
 
-	@Override
-	protected void onFragmentVisibleChange(boolean isVisible) {
-		super.onFragmentVisibleChange(isVisible);
+	private void unbindWithPlayer() {
+		PlayerController.getInstance(mContext).removeEventListener();
+		mSimpleExoPlayerView.setPlayer(null);
 
-		Log.d("danny", "onFragmentVisibleChange() is " + isVisible);
+		Log.d("danny", "MediaFragment" + mPosition + ", unbind with player");
 	}
 
 	@Override
 	protected void onFragmentFirstVisible() {
 		super.onFragmentFirstVisible();
 
-		Log.d("danny", "onFragmentFirstVisible()");
+		Log.d("danny", "MediaFragment" + mPosition + ", onFragmentFirstVisible()");
 	}
 }

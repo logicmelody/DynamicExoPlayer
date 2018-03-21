@@ -25,7 +25,7 @@ public class MediaPagerAdapter extends FragmentStatePagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-		return MediaFragment.newInstance(mMediaUrls.get(position));
+		return MediaFragment.newInstance(position, mMediaUrls.get(position));
 	}
 
 	@Override
