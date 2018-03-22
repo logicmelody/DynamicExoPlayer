@@ -1,4 +1,4 @@
-package com.dl.dynamicexoplayer.utils;
+package com.dl.dynamicexoplayer.okhttp;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
