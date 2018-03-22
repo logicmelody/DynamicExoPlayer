@@ -13,7 +13,7 @@ import okhttp3.OkHttpClient;
 
 public class ApiManager {
 
-	private volatile static OkHttpClient sHttpClient;
+	public volatile static OkHttpClient sHttpClient = new OkHttpClient();
 
 //	public synchronized static OkHttpClient getHttpClientInstance(Context context) {
 //		if (sHttpClient == null)

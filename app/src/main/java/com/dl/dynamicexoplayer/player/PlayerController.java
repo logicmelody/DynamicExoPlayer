@@ -4,21 +4,23 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.dl.dynamicexoplayer.okhttp.ApiManager;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
 import com.google.android.exoplayer2.source.DynamicConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.Player.EventListener;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -108,13 +110,16 @@ public class PlayerController {
 
 	private MediaSource buildDashMediaSource(Context context, String uri) {
 		// DataSource 是專門用來 load 資料的
-		HttpDataSource.Factory httpDataSourceFactory = getHttpDataSourceFactoryWithJwt(context);
+		DataSource.Factory dataSourceFactory = getDataSourceFactoryWithJwt(context);
 
-		return new DashMediaSource.Factory(new DefaultDashChunkSource.Factory(httpDataSourceFactory), httpDataSourceFactory).createMediaSource(Uri.parse(uri));
+		return new DashMediaSource.Factory(new DefaultDashChunkSource.Factory(dataSourceFactory), dataSourceFactory).createMediaSource(Uri.parse(uri));
 	}
 
-	private HttpDataSource.Factory getHttpDataSourceFactoryWithJwt(Context context) {
-		HttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSourceFactory("user-agent", BANDWIDTH_METER);
+	private DataSource.Factory getDataSourceFactoryWithJwt(Context context) {
+		DataSource.Factory defaultDataSourceFactory =
+				new DefaultDataSourceFactory(context, null, new OkHttpDataSourceFactory(ApiManager.sHttpClient, "user-agent", null));
+
+//		HttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSourceFactory("user-agent", BANDWIDTH_METER);
 
 //				new OkHttpDataSourceFactory(
 //						ApiManager.getHttpClientInstance(context),
@@ -124,7 +129,7 @@ public class PlayerController {
 //		httpDataSourceFactory.getDefaultRequestProperties().set("Authorization", "Bearer " + JWT);
 //		httpDataSourceFactory.getDefaultRequestProperties().set("User-Agent", "swag/2.15.1 (Android; com.machipopo.swag; htc; HTC_U-3u; en-US)");
 
-		return httpDataSourceFactory;
+		return defaultDataSourceFactory;
 	}
 
 	public void switchToMedia(int fragmentPosition) {
