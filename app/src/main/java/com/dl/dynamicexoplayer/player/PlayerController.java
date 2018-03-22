@@ -4,8 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.dl.dynamicexoplayer.media.OkHttpDataSourceFactory;
-import com.dl.dynamicexoplayer.utils.ApiManager;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -90,8 +88,8 @@ public class PlayerController {
 	 *
 	 * @param url
 	 */
-	public synchronized void addMedia(Context context, int fragmentPosition, String url) {
-		MediaSource dashMediaSource = buildDashMediaSource(context, url);
+	public synchronized void addMedia(int fragmentPosition, String url) {
+		MediaSource dashMediaSource = buildDashMediaSource(url);
 
 		if (mDynamicConcatenatingMediaSource.getSize() == 0) {
 			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
@@ -104,21 +102,15 @@ public class PlayerController {
 		mFragmentMediaSourcePositionMap.put(fragmentPosition, mDynamicConcatenatingMediaSource.getSize() - 1);
 	}
 
-	private MediaSource buildDashMediaSource(Context context, String uri) {
+	private MediaSource buildDashMediaSource(String uri) {
 		// DataSource 是專門用來 load 資料的
-		HttpDataSource.Factory httpDataSourceFactory = getHttpDataSourceFactoryWithJwt(context);
+		HttpDataSource.Factory httpDataSourceFactory = getHttpDataSourceFactoryWithJwt();
 
 		return new DashMediaSource.Factory(new DefaultDashChunkSource.Factory(httpDataSourceFactory), httpDataSourceFactory).createMediaSource(Uri.parse(uri));
 	}
 
-	private HttpDataSource.Factory getHttpDataSourceFactoryWithJwt(Context context) {
+	private HttpDataSource.Factory getHttpDataSourceFactoryWithJwt() {
 		HttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSourceFactory("user-agent", BANDWIDTH_METER);
-
-//				new OkHttpDataSourceFactory(
-//						ApiManager.getHttpClientInstance(context),
-//				new DefaultHttpDataSourceFactory(
-//						"user-agent",
-//						BANDWIDTH_METER);
 //		httpDataSourceFactory.getDefaultRequestProperties().set("Authorization", "Bearer " + JWT);
 //		httpDataSourceFactory.getDefaultRequestProperties().set("User-Agent", "swag/2.15.1 (Android; com.machipopo.swag; htc; HTC_U-3u; en-US)");
 
