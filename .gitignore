@@ -40,3 +40,4 @@ proguard/
 
 # Ndk build
 .externalNativeBuild
+.idea/workspace.xml
