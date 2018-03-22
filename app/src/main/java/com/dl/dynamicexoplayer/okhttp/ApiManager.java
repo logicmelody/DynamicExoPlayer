@@ -1,11 +1,13 @@
 package com.dl.dynamicexoplayer.okhttp;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
+import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 
 /**
  * Created by dannylin on 2018/3/21.
@@ -13,7 +15,46 @@ import okhttp3.OkHttpClient;
 
 public class ApiManager {
 
-	public volatile static OkHttpClient sHttpClient = new OkHttpClient();
+	private volatile static ApiManager sApiManager;
+
+	private static OkHttpClient sOkHttpClient;
+
+
+	public static ApiManager getInstance() {
+		if (sApiManager == null) {
+			synchronized (ApiManager.class) {
+				if (sApiManager == null) {
+					sApiManager = new ApiManager();
+				}
+			}
+		}
+
+		return sApiManager;
+	}
+
+	private ApiManager() {
+		OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+		List<Protocol> protocols = new ArrayList<>();
+		protocols.add(Protocol.HTTP_2);
+		protocols.add(Protocol.HTTP_1_1);
+
+		builder.protocols(protocols);
+		builder.connectTimeout(30, TimeUnit.SECONDS);
+		builder.readTimeout(30, TimeUnit.SECONDS);
+		builder.retryOnConnectionFailure(false);
+
+		sOkHttpClient = builder.build();
+	}
+
+	public OkHttpClient getOkHttpClient() {
+		return sOkHttpClient;
+	}
+
+	public void release() {
+		sOkHttpClient = null;
+		sApiManager = null;
+	}
 
 //	public synchronized static OkHttpClient getHttpClientInstance(Context context) {
 //		if (sHttpClient == null)

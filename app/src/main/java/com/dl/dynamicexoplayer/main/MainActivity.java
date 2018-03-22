@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.dl.dynamicexoplayer.R;
+import com.dl.dynamicexoplayer.okhttp.ApiManager;
 import com.dl.dynamicexoplayer.player.PlayerController;
 
 import butterknife.BindView;
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		mViewPagerMedia.removeOnPageChangeListener(mOnPageChangeListener);
+
+		ApiManager.getInstance().release();
 		PlayerController.getInstance(this).release();
 
 		super.onDestroy();
