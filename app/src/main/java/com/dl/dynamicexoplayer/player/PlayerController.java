@@ -133,6 +133,8 @@ public class PlayerController {
 		}
 
 		mPlayer.seekToDefaultPosition(mFragmentMediaSourcePositionMap.get(fragmentPosition));
+
+		Log.d("danny", "PlayerController switchToMedia, fragment position = " + fragmentPosition + ", windowIndex = " + mFragmentMediaSourcePositionMap.get(fragmentPosition));
 	}
 
 	public void switchToPrevious() {

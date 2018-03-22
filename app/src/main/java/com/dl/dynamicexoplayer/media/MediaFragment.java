@@ -38,7 +38,7 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 	private int mPosition = 0;
 	private String mMediaUrl = "";
 
-	private boolean shouldBindWithPlayer = false;
+	private boolean shouldBindWithPlayerInOnCreate = false;
 
 	private Player.EventListener mPlayerEventListener = new Player.DefaultEventListener() {
 
@@ -154,8 +154,12 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 	private void initialize() {
 		addMediaToPlayerController();
 
-		if (shouldBindWithPlayer) {
+		if (shouldBindWithPlayerInOnCreate) {
 			bindWithPlayer();
+		}
+
+		if (getUserVisibleHint()) {
+			PlayerController.getInstance(mContext).switchToMedia(mPosition);
 		}
 	}
 
@@ -208,13 +212,14 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 
 		if (mSimpleExoPlayerView == null) {
 			Log.d("danny", "MediaFragment" + mPosition + ", mSimpleExoPlayerView is null");
-			shouldBindWithPlayer = true;
+			shouldBindWithPlayerInOnCreate = true;
 
 			return;
 		}
 
 		if (isVisible) {
 			bindWithPlayer();
+			PlayerController.getInstance(mContext).switchToMedia(mPosition);
 
 		} else {
 			unbindWithPlayer();
@@ -225,10 +230,7 @@ public class MediaFragment extends DetectVisibilityInViewPagerFragment {
 		PlayerController.getInstance(mContext).addEventListener(mPlayerEventListener);
 		mSimpleExoPlayerView.setPlayer(PlayerController.getInstance(mContext).getExoPlayer());
 
-		// TODO: Might not have dash media source in PlayerController
-		PlayerController.getInstance(mContext).switchToMedia(mPosition);
-
-		shouldBindWithPlayer = false;
+		shouldBindWithPlayerInOnCreate = false;
 
 		Log.d("danny", "MediaFragment" + mPosition + ", bind with player");
 	}
