@@ -91,6 +91,10 @@ public class PlayerController {
 	 * @param url
 	 */
 	public synchronized void addMedia(Context context, int fragmentPosition, String url) {
+		if (mFragmentMediaSourcePositionMap.containsKey(fragmentPosition)) {
+			return;
+		}
+
 		MediaSource dashMediaSource = buildDashMediaSource(context, url);
 
 		if (mDynamicConcatenatingMediaSource.getSize() == 0) {
