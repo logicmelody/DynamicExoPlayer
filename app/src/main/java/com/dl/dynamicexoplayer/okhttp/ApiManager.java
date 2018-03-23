@@ -2,10 +2,10 @@ package com.dl.dynamicexoplayer.okhttp;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by dannylin on 2018/3/21.
@@ -67,6 +69,16 @@ public class ApiManager {
 	public void release() {
 		sOkHttpClient = null;
 		sApiManager = null;
+	}
+
+	public String run(String url) throws IOException {
+		Request request = new Request.Builder()
+				.url(url)
+				.build();
+
+		Response response = sOkHttpClient.newCall(request).execute();
+
+		return response.body().string();
 	}
 
 //	public synchronized static OkHttpClient getHttpClientInstance(Context context) {

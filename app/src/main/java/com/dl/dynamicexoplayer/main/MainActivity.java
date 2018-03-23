@@ -3,13 +3,24 @@ package com.dl.dynamicexoplayer.main;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.dl.dynamicexoplayer.R;
 import com.dl.dynamicexoplayer.okhttp.ApiManager;
 import com.dl.dynamicexoplayer.player.PlayerController;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 	};
 
 	private MediaPagerAdapter mMediaPagerAdapter;
+
+	private Timer mTimer;
 
 	private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.OnPageChangeListener() {
 		@Override
@@ -55,9 +68,12 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		initialize();
+		startLoopingHttpRequest();
 	}
 
 	private void initialize() {
+		mTimer = new Timer();
+
 		setupMediaViewPager();
 	}
 
@@ -72,9 +88,49 @@ public class MainActivity extends AppCompatActivity {
 		mViewPagerMedia.addOnPageChangeListener(mOnPageChangeListener);
 	}
 
+	private void startLoopingHttpRequest() {
+		mTimer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				Observable.create(new ObservableOnSubscribe<String>() {
+					@Override
+					public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+						emitter.onNext(ApiManager.getInstance(MainActivity.this).run("https://raw.github.com/square/okhttp/master/README.md"));
+					}
+
+				})
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
+						.subscribe(new Observer<String>() {
+							@Override
+							public void onSubscribe(Disposable d) {
+
+							}
+
+							@Override
+							public void onNext(String s) {
+								Toast.makeText(MainActivity.this, "Http request successful", Toast.LENGTH_SHORT).show();
+							}
+
+							@Override
+							public void onError(Throwable e) {
+
+							}
+
+							@Override
+							public void onComplete() {
+
+							}
+						});
+			}
+
+		}, 0, 5000);
+	}
+
 	@Override
 	protected void onDestroy() {
 		mViewPagerMedia.removeOnPageChangeListener(mOnPageChangeListener);
+		mTimer.cancel();
 
 		ApiManager.getInstance(this).release();
 		PlayerController.getInstance(this).release();
