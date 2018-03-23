@@ -117,7 +117,7 @@ public class PlayerController {
 
 	private DataSource.Factory getDataSourceFactoryWithJwt(Context context) {
 		DataSource.Factory defaultDataSourceFactory =
-				new DefaultDataSourceFactory(context, null, new OkHttpDataSourceFactory(ApiManager.getInstance().getOkHttpClient(), "user-agent", null));
+				new DefaultDataSourceFactory(context, null, new OkHttpDataSourceFactory(ApiManager.getInstance(context).getOkHttpClient(), "user-agent", null));
 
 //		HttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSourceFactory("user-agent", BANDWIDTH_METER);
 

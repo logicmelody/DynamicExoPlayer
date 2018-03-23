@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		mViewPagerMedia.removeOnPageChangeListener(mOnPageChangeListener);
 
-		ApiManager.getInstance().release();
+		ApiManager.getInstance(this).release();
 		PlayerController.getInstance(this).release();
 
 		super.onDestroy();
