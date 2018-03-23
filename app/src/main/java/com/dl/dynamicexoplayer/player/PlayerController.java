@@ -99,7 +99,7 @@ public class PlayerController {
 
 		if (mDynamicConcatenatingMediaSource.getSize() == 0) {
 			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
-			mPlayer.prepare(mDynamicConcatenatingMediaSource);
+			mPlayer.prepare(mDynamicConcatenatingMediaSource, true, true);
 
 		} else {
 			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
