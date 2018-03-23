@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.dl.dynamicexoplayer"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -15,36 +15,36 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    // force all dependencies to use our own okhttp module
+    configurations {
+        all*.exclude module: 'okhttp'
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.squareup.okio:okio:1.14.0'
+    implementation project(':okhttp-3.10.0')
 
     compile 'com.google.android.exoplayer:exoplayer-core:2.7.1'
     compile 'com.google.android.exoplayer:exoplayer-dash:2.7.1'
     compile 'com.google.android.exoplayer:exoplayer-ui:2.7.1'
-
     compile 'com.jakewharton:butterknife:8.8.1'
-    compile 'com.squareup.okhttp3:okhttp:3.10.0'
-
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     // Because RxAndroid releases are few and far between, it is recommended you also
     // explicitly depend on RxJava's latest version for bug fixes and new features.
     // (see https://github.com/ReactiveX/RxJava/releases for latest 2.x.x version)
     implementation 'io.reactivex.rxjava2:rxjava:2.1.11'
-
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-
     // 要跟 ExoPlayer 的版本一致
     implementation 'com.google.android.exoplayer:extension-okhttp:2.7.1'
-
-//    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-//    implementation ('com.squareup.okhttp3:logging-interceptor:3.6.0')
-//    implementation ('com.facebook.stetho:stetho-okhttp3:1.5.0')
-
+    //    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    //    implementation ('com.squareup.okhttp3:logging-interceptor:3.6.0')
+    //    implementation ('com.facebook.stetho:stetho-okhttp3:1.5.0')
     implementation 'com.facebook.stetho:stetho:1.5.0'
-    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
-
+    implementation ('com.facebook.stetho:stetho-okhttp3:1.5.0')
+    implementation project(':jwt')
 }

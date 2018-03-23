@@ -10,6 +10,7 @@
         android:id="@+id/simple_exo_player_view_media"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:surface_type="texture_view"
         app:show_timeout="0"
         app:resize_mode="fill"
         app:layout_constraintBottom_toBottomOf="parent"

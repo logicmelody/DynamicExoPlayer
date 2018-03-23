@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		initialize();
-		startLoopingHttpRequest();
+//		startLoopingHttpRequest();
 	}
 
 	private void initialize() {
