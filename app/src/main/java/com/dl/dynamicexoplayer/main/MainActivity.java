@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.dl.dynamicexoplayer.R;
 import com.dl.dynamicexoplayer.okhttp.ApiManager;
 import com.dl.dynamicexoplayer.player.PlayerController;
+import com.dl.dynamicexoplayer.viewpager.MediaPagerAdapter;
 
 import java.util.Timer;
 import java.util.TimerTask;

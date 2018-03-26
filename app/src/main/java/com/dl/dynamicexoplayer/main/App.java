@@ -1,4 +1,4 @@
-package com.dl.dynamicexoplayer;
+package com.dl.dynamicexoplayer.main;
 
 import android.app.Application;
 
