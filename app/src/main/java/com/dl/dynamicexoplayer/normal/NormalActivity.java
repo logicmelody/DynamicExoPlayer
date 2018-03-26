@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.dl.dynamicexoplayer.R;
+import com.dl.dynamicexoplayer.okhttp.ApiManager;
 import com.dl.dynamicexoplayer.player.PlayerController;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
@@ -157,4 +158,13 @@ public class NormalActivity extends AppCompatActivity {
 				return super.onOptionsItemSelected(item);
 		}
 	}
+
+	@Override
+	protected void onDestroy() {
+		ApiManager.getInstance(this).release();
+		PlayerController.getInstance(this).release();
+
+		super.onDestroy();
+	}
+
 }
