@@ -108,6 +108,18 @@ public class PlayerController {
 		mFragmentMediaSourcePositionMap.put(fragmentPosition, mDynamicConcatenatingMediaSource.getSize() - 1);
 	}
 
+	public void addMedia(Context context, String url) {
+		MediaSource dashMediaSource = buildDashMediaSource(context, url);
+
+		if (mDynamicConcatenatingMediaSource.getSize() == 0) {
+			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
+			mPlayer.prepare(mDynamicConcatenatingMediaSource, true, true);
+
+		} else {
+			mDynamicConcatenatingMediaSource.addMediaSource(dashMediaSource);
+		}
+	}
+
 	private MediaSource buildDashMediaSource(Context context, String uri) {
 		// DataSource 是專門用來 load 資料的
 		DataSource.Factory dataSourceFactory = getDataSourceFactoryWithJwt(context);

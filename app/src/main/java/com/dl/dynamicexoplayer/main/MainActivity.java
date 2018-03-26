@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.dl.dynamicexoplayer.R;
+import com.dl.dynamicexoplayer.normal.NormalActivity;
 import com.dl.dynamicexoplayer.viewpager.SlideActivity;
 
 import butterknife.ButterKnife;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
 	@OnClick(R.id.button_main_normal)
 	public void onClickMainButton() {
-
+		startActivity(new Intent(this, NormalActivity.class));
 	}
 
 	@OnClick(R.id.button_main_slide)
