@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -52,8 +53,9 @@ public class ApiManager {
 		builder.connectTimeout(30, TimeUnit.SECONDS);
 		builder.readTimeout(30, TimeUnit.SECONDS);
 		builder.retryOnConnectionFailure(false);
+        builder.connectionPool(new ConnectionPool(0, 1, TimeUnit.NANOSECONDS));
 
-		builder.cache(buildCache(context));
+//		builder.cache(buildCache(context));
 
 		sOkHttpClient = builder.build();
 	}
