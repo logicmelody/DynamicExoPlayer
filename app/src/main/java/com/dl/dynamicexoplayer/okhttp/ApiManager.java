@@ -53,6 +53,11 @@ public class ApiManager {
 		builder.connectTimeout(30, TimeUnit.SECONDS);
 		builder.readTimeout(30, TimeUnit.SECONDS);
 		builder.retryOnConnectionFailure(false);
+
+		// 目前OkHttp的版本(3.10.0)與ExoPlayer做整合的時候，有時候會發生SocketTimeout的問題，
+        // 原因是因為現在OkHttp的版本，當connection pool中的連線如果掛掉的時候，
+        // 他不會將已經死掉的connection重啟，所以會導致SocketTimeout，目前就等OkHttp釋出新的版本來修掉這個bug
+        // https://github.com/square/okhttp/issues/3146
         builder.connectionPool(new ConnectionPool(0, 1, TimeUnit.NANOSECONDS));
 
 //		builder.cache(buildCache(context));
